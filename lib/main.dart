@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,21 +19,21 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         ),
-        home: MyHomePage(),
+        home: const MyHomePage(),
       ),
     );
   }
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
+  WordPair current = WordPair.random();
 
   void getNext() {
     current = WordPair.random();
     notifyListeners();
   }
 
-  var favorites = <WordPair>[];
+  List<WordPair> favorites = <WordPair>[];
   void toggleFavorite() {
     if (favorites.contains(current)) {
       favorites.remove(current);
@@ -45,6 +45,8 @@ class MyAppState extends ChangeNotifier {
 }
 
 class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,29 +54,25 @@ class MyHomePage extends StatelessWidget {
         children: [
           SafeArea(
             child: NavigationRail(
-              extended: false,
-              destinations: [
+              destinations: const [
                 NavigationRailDestination(
                   icon: Icon(Icons.home),
-                  label: Text("Home"),
+                  label: Text('Home'),
                 ),
                 NavigationRailDestination(
                   icon: Icon(Icons.favorite),
-                  label: Text("Favorites"),
+                  label: Text('Favorites'),
                 ),
               ],
               selectedIndex: 0,
-              onDestinationSelected: (value) {
-                print("selected $value");
-              },
             ),
           ),
           Expanded(
-            child: Container(
+            child: ColoredBox(
               color: Theme.of(context).colorScheme.primaryContainer,
-              child: GeneratorPage(),
+              child: const GeneratorPage(),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -82,10 +80,12 @@ class MyHomePage extends StatelessWidget {
 }
 
 class GeneratorPage extends StatelessWidget {
+  const GeneratorPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    var appState = context.watch<MyAppState>();
-    var pair = appState.current;
+    final appState = context.watch<MyAppState>();
+    final pair = appState.current;
 
     IconData icon;
     if (appState.favorites.contains(pair)) {
@@ -98,25 +98,22 @@ class GeneratorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           BigCard(pair: pair),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton.icon(
-                  onPressed: () {
-                    appState.toggleFavorite();
-                  },
-                  icon: Icon(icon),
-                  label: Text("Like")),
-              SizedBox(width: 10),
+                onPressed: appState.toggleFavorite,
+                icon: Icon(icon),
+                label: const Text('Like'),
+              ),
+              const SizedBox(width: 10),
               ElevatedButton(
-                onPressed: () {
-                  appState.getNext();
-                },
-                child: Text("Next"),
-              )
+                onPressed: appState.getNext,
+                child: const Text('Next'),
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -145,7 +142,7 @@ class BigCard extends StatelessWidget {
         child: Text(
           pair.asLowerCase,
           style: style,
-          semanticsLabel: "${pair.first} ${pair.second}",
+          semanticsLabel: '${pair.first} ${pair.second}',
         ),
       ),
     );
